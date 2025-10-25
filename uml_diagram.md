@@ -1,4 +1,4 @@
-# UML diagram for DB management
+# UML Diagram for DB Management
 
 ```mermaid
 erDiagram
@@ -20,7 +20,6 @@ erDiagram
     CART {
         int cart_id PK "PK"
         string cart_type
-        string item_id FK "FK to PRODUCT_ITEM"
     }
 
     PRODUCT {
@@ -47,6 +46,7 @@ erDiagram
         int pallet_id FK "FK to INVENTORY_PALLET"
         date expiration_date "Denormalized from INVENTORY_PALLET"
         string status "e.g., In_Warehouse, On_Cart, Consumed"
+        INT cart_id FK "FK to CART"
     }
 
     CART_LIST {
@@ -66,30 +66,80 @@ erDiagram
 
 ---
 
-### Explicación del Diagrama Actual
+### Descripción Detallada del Diseño de la Base de Datos
 
-Este diagrama describe un sistema para gestionar productos, inventario y su asignación a vuelos a través de carritos. Vamos a desglosar cada tabla tal como aparece:
+Este diseño de base de datos modela un sistema de inventario y logística para el servicio a bordo de aerolíneas. El objetivo es rastrear productos desde su recepción en el almacén hasta su consumo en un vuelo, optimizando el manejo de inventario y la asignación de recursos.
+
+A continuación, se detalla el propósito de cada tabla y sus interrelaciones.
+
+#### Tablas de Catálogo y Vuelos
 
 1.  **PRODUCT**:
-    *   **Función**: Es el catálogo maestro de todos los productos. Define qué es cada producto con un nombre, descripción y costo. Por ejemplo, "Galletas de Chocolate 75g".
+    *   **Propósito**: Funciona como el catálogo maestro de todos los artículos que la aerolínea maneja. Cada fila representa un tipo de producto único (SKU).
+    *   **Columnas Clave**:
+        *   `product_id`: Identificador único para cada tipo de producto (e.g., "Lata de Refresco 355ml").
+        *   `name`, `description`: Detalles descriptivos del producto.
+        *   `unit_cost`: Costo base del producto, fundamental para análisis de rentabilidad.
 
-2.  **INVENTORY_PALLET**:
-    *   **Función**: Representa una paleta física de mercancía.
-    *   **Detalles**: Cada paleta contiene un solo tipo de producto (`product_id`) y todos los ítems en ella comparten la misma fecha de caducidad (`expiration_date`). El campo `warehouseStorage` parece ser un indicador para saber si la paleta está en la bodega principal (`true`) o en un almacén secundario (`false`).
+2.  **FLIGHT**:
+    *   **Propósito**: Almacena la información de las rutas de vuelo genéricas, independientemente de la fecha.
+    *   **Columnas Clave**:
+        *   `flight_id`: Identificador único para una ruta específica (e.g., MTY-CUN).
+        *   `airline`, `flight_type`: Información categórica sobre el vuelo.
 
-3.  **PRODUCT_ITEM**:
-    *   **Función**: Es el nivel más detallado del inventario. Cada fila es un producto individual con su propio número de serie único (`item_id`).
-    *   **Relaciones**: Se vincula a una `INVENTORY_PALLET` para saber de qué lote y producto proviene. También tiene su propia copia de la `expiration_date` y un `status` para saber su estado (en bodega, en carrito, etc.).
+3.  **CART**:
+    *   **Propósito**: Representa los carritos físicos que se utilizan para el servicio a bordo.
+    *   **Columnas Clave**:
+        *   `cart_id`: Identificador único para cada carrito físico.
+        *   `cart_type`: Define el tipo de carrito (e.g., "Bebidas", "Snacks", "Mixto"), lo que permite estandarizar su contenido.
 
-4.  **WAREHOUSE_INVENTORY**:
-    *   **Función**: Es una tabla de resumen. Su propósito es mostrar la cantidad total (`total_quantity`) que existe de un producto específico (`product_id`) sumando todo el inventario.
+#### Tablas de Inventario y Trazabilidad
 
-5.  **FLIGHT** y **SCHEDULED_FLIGHT**:
-    *   **Función**: `FLIGHT` define una ruta de vuelo genérica (ej. el vuelo AA105), mientras que `SCHEDULED_FLIGHT` representa ese vuelo en una fecha y hora concretas.
-    *   **Relaciones**: El diagrama indica que a cada `SCHEDULED_FLIGHT` se le asigna un `CART` (un carrito).
+El sistema maneja el inventario en tres niveles de granularidad:
 
-6.  **CART** y **CART_LIST**:
-    *   **Función**: Estas tablas definen un carrito y su contenido. Sin embargo, tal como está en el diagrama, hay **dos lógicas contradictorias**:
-        1.  **Por un lado, `CART_LIST`**: Esta tabla detalla el contenido de un carrito por cantidades. Dice: "el carrito X (`cart_id`) contiene 50 unidades (`qty`) del producto Y (`product_id`)". Este es un sistema para manejar el contenido por volumen.
-        2.  **Por otro lado, el campo `item_id` en `CART`**: La tabla `CART` tiene un campo `item_id` que la vincula a un *único* `PRODUCT_ITEM`. Esto, de forma literal, significaría que un carrito solo puede contener un ítem individual, lo cual es lógicamente incorrecto para un carrito de servicio.
-    *   **Interpretación**: Lo más probable es que la intención correcta sea la de la tabla `CART_LIST`, y que el campo `item_id` en la tabla `CART` sea un error en la versión actual del diagrama, ya que un carrito debe poder contener múltiples productos en diversas cantidades.
+4.  **INVENTORY_PALLET**:
+    *   **Propósito**: Representa el nivel más alto de agrupación de inventario: una paleta o lote de un solo tipo de producto que comparte la misma fecha de caducidad. Es la unidad principal para la gestión de almacén.
+    *   **Relaciones**: Se conecta directamente con `PRODUCT` para saber qué producto contiene.
+    *   **Columnas Clave**:
+        *   `pallet_id`: Identificador único para la paleta.
+        *   `product_id`: Indica el tipo de producto en la paleta.
+        *   `expiration_date`: Fecha de caducidad compartida por todos los artículos de esta paleta.
+        *   `warehouseStorage`: Un booleano que diferencia la ubicación física (almacén principal vs. sala de preparación), facilitando la logística interna.
+
+5.  **PRODUCT_ITEM**:
+    *   **Propósito**: Es el corazón de la trazabilidad. Cada fila es un **artículo físico individual** con un número de serie único. Permite el seguimiento preciso de cada lata, botella o snack desde el almacén hasta el consumidor.
+    *   **Relaciones**:
+        *   Se vincula a `INVENTORY_PALLET` (`pallet_id`) para heredar su origen y fecha de caducidad.
+        *   Se vincula opcionalmente a `CART` (`cart_id`) cuando el artículo es asignado a un carrito específico.
+    *   **Columnas Clave**:
+        *   `item_id`: El número de serie único (e.g., un código de barras escaneable).
+        *   `status`: Campo crítico que define el estado del artículo en el ciclo de vida (`In_Warehouse`, `On_Cart`, `Consumed`, `Expired`, `Returned`).
+        *   `expiration_date`: Denormalizada desde la paleta para facilitar consultas rápidas sin necesidad de un JOIN.
+
+6.  **WAREHOUSE_INVENTORY**:
+    *   **Propósito**: Es una tabla de resumen o vista materializada. Su función es ofrecer una consulta extremadamente rápida de la cantidad total disponible de un producto en todo el almacén.
+    *   **Funcionamiento**: El valor `total_quantity` se calcularía sumando todos los `PRODUCT_ITEM` con estado `In_Warehouse` para un `product_id` dado. Esto evita costosas operaciones de agregación en tiempo real.
+    *   **Relaciones**: Se vincula directamente con `PRODUCT`.
+
+#### Tablas Transaccionales y de Asignación
+
+7.  **SCHEDULED_FLIGHT**:
+    *   **Propósito**: Representa una instancia concreta de un vuelo en una fecha específica. Es la tabla central que conecta la operación del vuelo con la logística del carrito.
+    *   **Relaciones**:
+        *   Se conecta con `FLIGHT` para obtener los detalles de la ruta.
+        *   Se conecta con `CART` para asignar un carrito específico a este vuelo.
+
+8.  **CART_LIST**:
+    *   **Propósito**: Define la **plantilla de carga** o el "planograma" de un carrito. No representa el contenido físico en tiempo real, sino la lista de productos y cantidades estándar que lleva un `cart_id` para cada `flight_id`.
+    *   **Funcionamiento**: Por ejemplo, para un `cart_id` de tipo "Bebidas", esta tabla podría especificar: 50 unidades de "Refresco de Cola", 50 de "Agua Mineral", etc. Sirve como una lista de verificación para el personal de tierra.
+    *   **Relaciones**: Conecta `CART` y `PRODUCT` para definir estas plantillas.
+
+### Flujo de Datos y Lógica de Negocio
+
+1.  **Recepción de Mercancía**: Los productos (`PRODUCT`) llegan en lotes (`INVENTORY_PALLET`). Cada artículo individual se registra como un `PRODUCT_ITEM` con un `item_id` único y estado "In_Warehouse". El resumen de `WAREHOUSE_INVENTORY` se actualiza.
+2.  **Preparación de Vuelo**: Se asigna un `CART` a un `SCHEDULED_FLIGHT`.
+3.  **Carga del Carrito**: El personal de tierra consulta `CART_LIST` para saber qué cargar en el carrito. Escanean el `item_id` de cada `PRODUCT_ITEM` a medida que lo cargan. Al escanear, el `status` del `PRODUCT_ITEM` cambia a "On_Cart" y se le asigna el `cart_id` correspondiente.
+4.  **Durante el Vuelo**: Cuando un producto se consume, su `status` podría actualizarse a "Consumed" o eliminarse de la tabla. Los productos intactos que regresen del vuelo pasarán por un proceso de revisión de fecha de caducidad mediante el escaneade de su identificador único `item_id` y pasar a re-abordaje o a consumo interno.
+5.  **Post-Vuelo**: El carrito regresa. Los artículos no consumidos se escanean y su `status` vuelve a "In_Warehouse" (o "Returned"), liberando el `cart_id`. Los artículos caducados o dañados se marcan como corresponde.
+
+Este modelo de datos dual (plantilla con `CART_LIST` y seguimiento físico con `PRODUCT_ITEM`) proporciona tanto un estándar operativo como una trazabilidad granular, resolviendo la aparente contradicción en el diagrama inicial.
