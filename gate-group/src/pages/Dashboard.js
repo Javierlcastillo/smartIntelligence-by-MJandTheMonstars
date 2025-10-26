@@ -1,6 +1,8 @@
-import { React, useState} from 'react';
+import { React, useEffect, useState } from 'react';
 import Flights from '../structs/Flights';
 import './Dashboard.css';
+import { fetchFlightsData, fetchWarehouseStats } from '../lib/flightsService';
+import DashboardCharts from '../components/DashboardCharts';
 
 
 function Dashboard() {
@@ -8,42 +10,51 @@ function Dashboard() {
   const [flightFilter, setFlightFilter] = useState('all');
   const [selectedFlightId, setSelectedFlightId] = useState(null);
 
-  // Sample data for dashboard
-  const dashboardData = {
-    flightsToday: 20,
-    flightsCompleted: 12,
-    flightsActive: 3,
-    flightsPending: 5,
-    totalProducts: 156,
-    warehouseCapacity: 85
-  };
+  // Live data from database
+  const [flights, setFlights] = useState([]);
+  const [warehouse, setWarehouse] = useState({ totalProducts: 0, capacityPct: 0 });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const upcomingFlights = [
-    {
-      id: 'LX110',
-      route: 'MTY-ZUR',
-      departure: '14:30',
-      carts: 3,
-      completedCarts: 1,
-      status: 'Active'
-    },
-    {
-      id: 'BA215',
-      route: 'LHR-JFK',
-      departure: '16:45',
-      carts: 2,
-      completedCarts: 2,
-      status: 'Ready'
-    },
-    {
-      id: 'AF890',
-      route: 'CDG-LAX',
-      departure: '22:15',
-      carts: 3,
-      completedCarts: 0,
-      status: 'Pending'
+  useEffect(() => {
+    let mounted = true;
+    async function load() {
+      try {
+        setLoading(true);
+        const [flightsData, warehouseStats] = await Promise.all([
+          fetchFlightsData(),
+          fetchWarehouseStats()
+        ]);
+        if (!mounted) return;
+        setFlights(flightsData);
+        setWarehouse(warehouseStats);
+      } catch (err) {
+        if (!mounted) return;
+        console.error('Error loading dashboard data:', err);
+        setError(err.message);
+      } finally {
+        if (mounted) setLoading(false);
+      }
     }
-  ];
+    load();
+    return () => { mounted = false; };
+  }, []);
+
+  const flightsToday = flights.length;
+  const flightsCompleted = flights.filter(f => f.status === 'Ready').length;
+  const flightsActive = flights.filter(f => f.status === 'Active').length;
+  const flightsPending = flights.filter(f => f.status === 'Pending').length;
+
+  const upcomingFlights = flights
+    .slice(0, 3)
+    .map(f => ({
+      id: f.id,
+      route: f.route,
+      departure: f.departure,
+      carts: f.carts.length,
+      completedCarts: f.carts.filter(c => c.completed).length,
+      status: f.status
+    }));
 
   const handleNavigateToFlights = (filter = 'all', flightId = null) => {
     setCurrentPage('flights');
@@ -89,35 +100,27 @@ function Dashboard() {
       {/* Main metrics */}
       <section className="metrics-grid">
         <div className="metric-card primary" onClick={() => handleNavigateToFlights('all')}>
-          <h3>{dashboardData.flightsToday}</h3>
+          <h3>{loading ? '—' : flightsToday}</h3>
           <p>Flights Today</p>
         </div>
         <div className="metric-card success clickable" onClick={() => handleNavigateToFlights('completed')}>
-          <h3>{dashboardData.flightsCompleted}</h3>
+          <h3>{loading ? '—' : flightsCompleted}</h3>
           <p>Completed</p>
         </div>
         <div className="metric-card warning clickable" onClick={() => handleNavigateToFlights('active')}>
-          <h3>{dashboardData.flightsActive}</h3>
+          <h3>{loading ? '—' : flightsActive}</h3>
           <p>Active</p>
         </div>
         <div className="metric-card danger clickable" onClick={() => handleNavigateToFlights('pending')}>
-          <h3>{dashboardData.flightsPending}</h3>
+          <h3>{loading ? '—' : flightsPending}</h3>
           <p>Pending</p>
         </div>
       </section>
 
       {/* Warehouse status */}
       <div className="main-content">
-        <section className="inventory-status">
-          <h2>Warehouse Status</h2>
-          <div className="status-bar">
-            <div className="status-fill" style={{width: `${dashboardData.warehouseCapacity}%`}}></div>
-          </div>
-          <div className="status-info">
-            <span>{dashboardData.totalProducts} products</span>
-            <span>{dashboardData.warehouseCapacity}% capacity</span>
-          </div>
-        </section>
+        {/* Charts */}
+        <DashboardCharts flights={flights} warehouse={warehouse} />
 
 
 
@@ -125,7 +128,7 @@ function Dashboard() {
         <section className="upcoming-flights">
           <h2>Upcoming Flights</h2>
           <div className="flights-container">
-            {upcomingFlights.map((flight) => (
+            {(loading ? [] : upcomingFlights).map((flight) => (
               <div key={flight.id} className="flight-card clickable" onClick={() => handleNavigateToSpecificFlight(flight.id)}>
                 <div className="flight-layout">
                   <div className="flight-id-section">
