@@ -94,18 +94,18 @@ function PalletForm() {
   const validate = () => {
     const newErrors = {};
     if (!formData.palletId || formData.palletId.trim() === '') {
-      newErrors.palletId = 'Ingresa un ID de pallet';
+      newErrors.palletId = 'Add a pallet ID';
     }
     if (!formData.productId || formData.productId.trim() === '') {
-      newErrors.productId = 'Ingresa un ID de producto (SKU)';
+      newErrors.productId = 'Add a product ID';
     } else if (formData.productId.trim().length > 500) {
       newErrors.productId = 'El SKU no puede tener más de 500 caracteres';
     }
     if (!formData.expirationDate) {
-      newErrors.expirationDate = 'Selecciona la fecha de caducidad';
+      newErrors.expirationDate = 'Select exp date';
     }
     if (formData.initialQuantity === '' || Number(formData.initialQuantity) <= 0) {
-      newErrors.initialQuantity = 'La cantidad debe ser mayor a 0';
+      newErrors.initialQuantity = 'Quantity needs to be bigger than 0';
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -156,71 +156,71 @@ function PalletForm() {
     <div className="pallet-form-page">
       <div className="page-container">
         <header className="page-header">
-          <h1>Llenado de Información de Pallet</h1>
-          <p>Registra un pallet recibido: producto, caducidad, ubicación y cantidad.</p>
+          <h1>Pallet information form</h1>
+          <p>Register a received pallet: product, exp. date, location y quntity.</p>
         </header>
 
         <form className="form-card" onSubmit={handleSubmit} noValidate>
           {/* Form fields... */}
           <div className="form-grid">
             <div className="form-field">
-              <label htmlFor="palletId">ID de Pallet</label>
+              <label htmlFor="palletId">Pallet ID</label>
               <input id="palletId" name="palletId" type="text" value={formData.palletId} onChange={handleChange} />
               {errors.palletId && <span className="error-text">{errors.palletId}</span>}
             </div>
             <div className="form-field">
-              <label htmlFor="productId">ID de Producto (SKU)</label>
+              <label htmlFor="productId">Product ID (SKU)</label>
               <input id="productId" name="productId" type="text" value={formData.productId} onChange={handleChange} maxLength="500" />
               {errors.productId && <span className="error-text">{errors.productId}</span>}
             </div>
             <div className="form-field">
-              <label htmlFor="productName">Nombre de Producto (Opcional)</label>
+              <label htmlFor="productName">Product Name (Optional)</label>
               <input id="productName" name="productName" type="text" value={formData.productName} onChange={handleChange} />
             </div>
             <div className="form-field">
-              <label htmlFor="expirationDate">Fecha de Caducidad</label>
+              <label htmlFor="expirationDate">Expiration Date</label>
               <input id="expirationDate" name="expirationDate" type="date" value={formData.expirationDate} onChange={handleChange} />
               {errors.expirationDate && <span className="error-text">{errors.expirationDate}</span>}
             </div>
             <div className="form-field">
-              <label>Ubicación Física</label>
+              <label>Location in storage</label>
               <div className="toggle-group">
-                <button type="button" className={`toggle-btn ${formData.inWarehouse ? 'active' : ''}`} onClick={() => handleToggleLocation(true)}>Bodega Principal</button>
-                <button type="button" className={`toggle-btn ${!formData.inWarehouse ? 'active' : ''}`} onClick={() => handleToggleLocation(false)}>Cuarto de Preparación</button>
+                <button type="button" className={`toggle-btn ${formData.inWarehouse ? 'active' : ''}`} onClick={() => handleToggleLocation(true)}>Main Storage</button>
+                <button type="button" className={`toggle-btn ${!formData.inWarehouse ? 'active' : ''}`} onClick={() => handleToggleLocation(false)}>Pick & Pack </button>
               </div>
             </div>
             <div className="form-field">
-              <label htmlFor="initialQuantity">Cantidad Inicial</label>
+              <label htmlFor="initialQuantity">Initial Amount</label>
               <input id="initialQuantity" name="initialQuantity" type="number" min="1" step="1" value={formData.initialQuantity} onChange={handleChange} />
               {errors.initialQuantity && <span className="error-text">{errors.initialQuantity}</span>}
             </div>
             <div className="form-field full-span">
-              <label htmlFor="notes">Notas</label>
+              <label htmlFor="notes">Notes</label>
               <textarea id="notes" name="notes" rows="3" value={formData.notes} onChange={handleChange} />
             </div>
           </div>
 
           <div className="form-actions">
-            <button type="submit" className="btn primary">Guardar Pallet</button>
-            <button type="button" className="btn secondary" onClick={handleClear}>Limpiar</button>
-            <button type="button" className="btn tertiary" onClick={goToScanner}>Escanear Ítems</button>
-            <button type="button" className="btn ghost" onClick={goHome}>Inicio</button>
+            <button type="submit" className="btn primary">Save Pallet</button>
+            <button type="button" className="btn secondary" onClick={handleClear}>Reset</button>
+            <button type="button" className="btn tertiary" onClick={goToScanner}>Scan Items</button>
+            <button type="button" className="btn ghost" onClick={goHome}>Home</button>
           </div>
           {errors.api && <div className="error-text" style={{marginTop: '12px', textAlign: 'center'}}>{errors.api}</div>}
         </form>
 
         {saved && (
           <section className="summary-card">
-            <h2>Resumen Guardado</h2>
+            <h2>Resume</h2>
             <div className="summary-grid">
               <div><strong>Pallet:</strong> <span>{saved.palletId}</span></div>
-              <div><strong>Producto:</strong> <span>{saved.productName || '—'} {saved.productId ? `(SKU ${saved.productId})` : ''}</span></div>
-              <div><strong>Caducidad:</strong> <span>{saved.expirationDate}</span></div>
-              <div><strong>Ubicación:</strong> <span>{saved.inWarehouse ? 'Bodega Principal' : 'Cuarto de Preparación'}</span></div>
-              <div><strong>Cantidad Inicial:</strong> <span>{saved.initialQuantity}</span></div>
+              <div><strong>Product:</strong> <span>{saved.productName || '—'} {saved.productId ? `(SKU ${saved.productId})` : ''}</span></div>
+              <div><strong>Exp. Date:</strong> <span>{saved.expirationDate}</span></div>
+              <div><strong>Location:</strong> <span>{saved.inWarehouse ? 'Bodega Principal' : 'Cuarto de Preparación'}</span></div>
+              <div><strong>Initial qty.:</strong> <span>{saved.initialQuantity}</span></div>
             </div>
             <div className="form-actions" style={{ marginTop: '20px', borderTop: '1px solid #eee', paddingTop: '20px' }}>
-                <button type="button" className="btn primary" onClick={handleStartGeneration}>Iniciar Generación de QRs</button>
+                <button type="button" className="btn primary" onClick={handleStartGeneration}>Generate QR codes</button>
             </div>
           </section>
         )}
@@ -229,7 +229,7 @@ function PalletForm() {
           <div className="modal-overlay" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
             <div className="modal-content" style={{ position: 'relative', background: 'white', padding: '25px', borderRadius: '10px', minWidth: '320px', maxWidth: '90%', boxShadow: '0 5px 15px rgba(0,0,0,0.3)', textAlign: 'center' }}>
               <button onClick={handleStopGeneration} style={{ position: 'absolute', top: '10px', right: '15px', background: 'transparent', border: 'none', fontSize: '1.8rem', cursor: 'pointer', color: '#888', lineHeight: 1 }}>&times;</button>
-              <h2 style={{ marginTop: 0, marginBottom: '15px' }}>QR Generado ({currentQRIndex + 1} / {saved.initialQuantity})</h2>
+              <h2 style={{ marginTop: 0, marginBottom: '15px' }}>QR Generated ({currentQRIndex + 1} / {saved.initialQuantity})</h2>
               {currentQR.dataUrl ? (
                 <div>
                   <img src={currentQR.dataUrl} alt={currentQR.itemId} style={{ width: '200px', height: '200px', margin: '0 auto' }} />
@@ -239,7 +239,7 @@ function PalletForm() {
                 <p style={{height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>{currentQR.itemId}</p>
               )}
               <button onClick={isLastQR ? handleStopGeneration : handleNextQR} className="btn primary" style={{ width: '100%', marginTop: '20px' }}>
-                {isLastQR ? 'Finalizar' : 'Siguiente'}
+                {isLastQR ? 'Finish' : 'Next'}
               </button>
             </div>
           </div>

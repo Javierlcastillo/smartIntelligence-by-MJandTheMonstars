@@ -27,16 +27,16 @@ function LandingPage() {
       <div className="landing-container">
         <header className="landing-header">
           <h1>Inventory Management System</h1>
-          <p>Plataforma de Gestión de Inventarios para GateGroup</p>
+          <p>Inventory Management System for GateGroup</p>
         </header>
 
         {/* Navigation for Desktop (hidden on mobile) */}
         <nav className="landing-nav-desktop">
           <Link to="/pallet" className="nav-button">
-            Llenado de Pallet
+            Pallet Form
           </Link>
           <Link to="/scanner" className="nav-button" id='scan-item'>
-            Escaner de Items
+            Item Scan
           </Link>
           <Link to="/dashboard" className="nav-button">
             Dashboard
@@ -56,7 +56,7 @@ function LandingPage() {
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><line x1="14" y1="14" x2="14" y2="14.01"></line><line x1="17.5" y1="14" x2="17.5" y2="14.01"></line><line x1="14" y1="17.5" x2="14" y2="17.5.01"></line><line x1="21" y1="17.5" x2="21" y2="17.5.01"></line><line x1="17.5" y1="17.5" x2="17.5" y2="17.5.01"></line><line x1="21" y1="21" x2="21" y2="21.01"></line><line x1="14" y1="21" x2="14" y2="21.01"></line><line x1="17.5" y1="21" x2="17.5" y2="21.01"></line><line x1="21" y1="14" x2="21" y2="14.01"></line>
             </svg>
-            <span>Escaner</span>
+            <span>Scan</span>
           </Link>
         </nav>
       </div>

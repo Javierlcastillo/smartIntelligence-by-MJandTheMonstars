@@ -192,8 +192,8 @@ function QRScannerSection({
   return (
     <div className="qr-scanner-container">
       <div className="qr-scanner-header">
-        <h1>Escanear QR</h1>
-        <p>Apunta la cámara al código y presiona el botón para capturar.</p>
+        <h1>Scam QR</h1>
+        <p>Point the camera and press the button to capture</p>
       </div>
 
       <div className="video-container">
@@ -201,13 +201,13 @@ function QRScannerSection({
         <ScanFrame onCapture={handleCapture} />
         <div className="video-controls">
           <button onClick={toggleTorch} className="control-button">
-            {torchOn ? "Linterna: ON" : "Linterna: OFF"}
+            {torchOn ? "Flashlight: ON" : "Flashlight: OFF"}
           </button>
         </div>
       </div>
       <div className="result-container">
         <div className="result-box">
-          <div className="label">Último resultado (raw)</div>
+          <div className="label">Last Resault (raw)</div>
           <div className="result-text">{lastResult || "—"}</div>
           {error && <div className="error-text">Aviso: {error}</div>}
         </div>
