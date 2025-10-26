@@ -7,8 +7,8 @@ function PalletForm() {
   const navigate = useNavigate();
 
   const generatedPalletId = useMemo(() => {
-    // Genera un ID numérico de 9 dígitos basado en timestamp
-    return Number(String(Date.now()).slice(-9));
+    // Genera un ID string único basado en timestamp
+    return `PAL-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   }, []);
 
   const [formData, setFormData] = useState({
@@ -16,7 +16,7 @@ function PalletForm() {
     productId: '',
     productName: '',
     expirationDate: '',
-    warehouseStorage: true, // true = Bodega principal, false = Cuarto de preparación
+    inWarehouse: true, // true = Bodega principal, false = Cuarto de preparación
     initialQuantity: '',
     notes: ''
   });
@@ -26,7 +26,7 @@ function PalletForm() {
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
-    if (type === 'number') {
+    if (type === 'number' && name !== 'productId') {
       setFormData((prev) => ({ ...prev, [name]: value === '' ? '' : Number(value) }));
       return;
     }
@@ -34,16 +34,18 @@ function PalletForm() {
   };
 
   const handleToggleLocation = (flag) => {
-    setFormData((prev) => ({ ...prev, warehouseStorage: flag }));
+    setFormData((prev) => ({ ...prev, inWarehouse: flag }));
   };
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.palletId || Number.isNaN(Number(formData.palletId))) {
-      newErrors.palletId = 'Ingresa un ID de pallet numérico';
+    if (!formData.palletId || formData.palletId.trim() === '') {
+      newErrors.palletId = 'Ingresa un ID de pallet';
     }
-    if (!formData.productId || Number.isNaN(Number(formData.productId))) {
-      newErrors.productId = 'Ingresa un ID de producto numérico';
+    if (!formData.productId || formData.productId.trim() === '') {
+      newErrors.productId = 'Ingresa un ID de producto (SKU)';
+    } else if (formData.productId.trim().length > 500) {
+      newErrors.productId = 'El SKU no puede tener más de 500 caracteres';
     }
     if (!formData.expirationDate) {
       newErrors.expirationDate = 'Selecciona la fecha de caducidad';
@@ -59,79 +61,63 @@ function PalletForm() {
     e.preventDefault();
     if (!validate()) return;
 
-    const palletId = Number(formData.palletId);
-    const productId = Number(formData.productId);
+    const palletId = formData.palletId.trim();
+    const productId = formData.productId.trim();
     const qty = Number(formData.initialQuantity);
 
     try {
-      // 1) Crear registro en INVENTORY_PALLET
+      // 1) Crear/actualizar PRODUCT si no existe
+      const { error: productErr } = await supabase
+        .from('product')
+        .upsert([{
+          product_id: productId,
+          name: formData.productName || productId,
+          description: formData.notes || '',
+          unit_cost: 0.00
+        }], { onConflict: 'product_id' });
+      
+      if (productErr) {
+        setErrors({ api: productErr.message });
+        return;
+      }
+
+      // 2) Crear registro en inventory_pallet
       const { error: palletErr } = await supabase
-        .from('INVENTORY_PALLET')
+        .from('inventory_pallet')
         .insert([{
           pallet_id: palletId,
           product_id: productId,
           expiration_date: formData.expirationDate,
-          warehouseStorage: formData.warehouseStorage
+          in_warehouse: formData.inWarehouse
         }]);
       if (palletErr) { 
         setErrors({ api: palletErr.message }); 
         return; 
       }
 
-      // 2) Crear PRODUCT_ITEMs (uno por unidad)
-      const uuids = Array.from({ length: qty }, () => 
-        crypto.randomUUID ? crypto.randomUUID() : `${palletId}-${Math.random().toString(36).slice(2, 10)}`
-      );
-
-      const items = uuids.map((id) => ({
-        item_id: id,
-        pallet_id: palletId,
-        expiration_date: formData.expirationDate,
-        status: 'In_Warehouse',
-        cart_id: null
-      }));
+      // 3) Crear product_items (uno por unidad)
+      const items = Array.from({ length: qty }, (_, index) => {
+        const itemId = `${palletId}-${String(index + 1).padStart(6, '0')}`;
+        return {
+          item_id: itemId,
+          pallet_id: palletId,
+          expiration_date: formData.expirationDate,
+          status: 'ok',
+          cart_id: null
+        };
+      });
 
       // Inserción en lotes por si qty es grande
       const chunkSize = 500;
       for (let i = 0; i < items.length; i += chunkSize) {
         const chunk = items.slice(i, i + chunkSize);
-        const { error: itemErr } = await supabase.from('PRODUCT_ITEM').insert(chunk);
+        const { error: itemErr } = await supabase.from('product_item').insert(chunk);
         if (itemErr) { 
           setErrors({ api: itemErr.message }); 
           return; 
         }
       }
 
-      // 3) Actualizar WAREHOUSE_INVENTORY (sumar cantidad)
-      const { data: inv, error: invSelErr } = await supabase
-        .from('WAREHOUSE_INVENTORY')
-        .select('total_quantity')
-        .eq('product_id', productId)
-        .maybeSingle();
-      
-      if (invSelErr && invSelErr.code !== 'PGRST116') { // ignore not found
-        setErrors({ api: invSelErr.message }); 
-        return; 
-      }
-
-      if (inv) {
-        const { error: invUpdErr } = await supabase
-          .from('WAREHOUSE_INVENTORY')
-          .update({ total_quantity: (inv.total_quantity || 0) + qty })
-          .eq('product_id', productId);
-        if (invUpdErr) { 
-          setErrors({ api: invUpdErr.message }); 
-          return; 
-        }
-      } else {
-        const { error: invInsErr } = await supabase
-          .from('WAREHOUSE_INVENTORY')
-          .insert([{ product_id: productId, total_quantity: qty }]);
-        if (invInsErr) { 
-          setErrors({ api: invInsErr.message }); 
-          return; 
-        }
-      }
 
       // Local feedback
       setSaved({
@@ -151,7 +137,7 @@ function PalletForm() {
       productId: '',
       productName: '',
       expirationDate: '',
-      warehouseStorage: true,
+      inWarehouse: true,
       initialQuantity: '',
       notes: ''
     });
@@ -190,10 +176,11 @@ function PalletForm() {
               <input
                 id="productId"
                 name="productId"
-                type="number"
+                type="text"
                 value={formData.productId}
                 onChange={handleChange}
-                placeholder="Ej. 100234"
+                placeholder="Ej. SKU-100234"
+                maxLength="500"
               />
               {errors.productId && <span className="error-text">{errors.productId}</span>}
             </div>
@@ -227,14 +214,14 @@ function PalletForm() {
               <div className="toggle-group">
                 <button
                   type="button"
-                  className={`toggle-btn ${formData.warehouseStorage ? 'active' : ''}`}
+                  className={`toggle-btn ${formData.inWarehouse ? 'active' : ''}`}
                   onClick={() => handleToggleLocation(true)}
                 >
                   Bodega Principal
                 </button>
                 <button
                   type="button"
-                  className={`toggle-btn ${!formData.warehouseStorage ? 'active' : ''}`}
+                  className={`toggle-btn ${!formData.inWarehouse ? 'active' : ''}`}
                   onClick={() => handleToggleLocation(false)}
                 >
                   Cuarto de Preparación
@@ -293,7 +280,7 @@ function PalletForm() {
                 <strong>Caducidad:</strong> <span>{saved.expirationDate}</span>
               </div>
               <div>
-                <strong>Ubicación:</strong> <span>{saved.warehouseStorage ? 'Bodega Principal' : 'Cuarto de Preparación'}</span>
+                <strong>Ubicación:</strong> <span>{saved.inWarehouse ? 'Bodega Principal' : 'Cuarto de Preparación'}</span>
               </div>
               <div>
                 <strong>Cantidad Inicial:</strong> <span>{saved.initialQuantity}</span>
