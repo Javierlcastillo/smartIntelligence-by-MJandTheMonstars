@@ -1,6 +1,6 @@
 /* Dashboard Styles */
 .dashboard-container {
-  padding: 60px 20px 20px 20px;
+  padding: 20px 20px 20px 20px;
   background-color: var(--color-background);
   min-height: 100vh;
   font-family: var(--font-family-main);
@@ -211,6 +211,16 @@
 
 .flight-badge.ready {
   background: var(--color-success);
+  color: var(--color-text-on-primary);
+}
+
+.flight-badge.active {
+  background: var(--color-warning);
+  color: var(--color-text-on-primary);
+}
+
+.flight-badge.pending {
+  background: var(--color-error);
   color: var(--color-text-on-primary);
 }
 

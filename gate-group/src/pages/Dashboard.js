@@ -25,7 +25,7 @@ function Dashboard() {
       departure: '14:30',
       carts: 3,
       completedCarts: 1,
-      status: 'Preparing'
+      status: 'Active'
     },
     {
       id: 'BA215',
