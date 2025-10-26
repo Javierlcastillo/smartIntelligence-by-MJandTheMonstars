@@ -41,9 +41,7 @@ function Header() {
           <Link to="/reports" className="menu-item" onClick={closeMenu}>
             Reports
           </Link>
-          <Link to="/settings" className="menu-item" onClick={closeMenu}>
-            Settings
-          </Link>
+          
         </nav>
       </div>
       
