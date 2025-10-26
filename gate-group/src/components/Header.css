@@ -13,13 +13,13 @@
   font-family: var(--font-family-headings);
   font-weight: 300;
   font-size: 2rem;
-  color: var(--color-text-on-primary);
+  color: var(--white-text);
   margin: 0; /* Remove default margin */
 }
 
 #GateGroup-head b {
   font-weight: 600;
-  color: var(--color-text-on-primary);
+  color: var(--white-text);
 }
 
 /* Burger Menu Styles */
@@ -43,7 +43,7 @@
 .burger-menu span {
   width: 2rem;
   height: 0.25rem;
-  background: var(--color-text-on-primary);
+  background: var(--white-text);
   border-radius: 10px;
   transition: all 0.3s linear;
   position: relative;
