@@ -2,18 +2,19 @@
   /* Landing Page Color Scheme */
   --color-primary: #020064;
   --color-primary-hover: #40a9ff; 
-  --color-primary-active: hsl(211, 84%, 35%);
+  --color-primary-active: #096dd9;
 
-  /* Colores de Texto */
-  --color-text-secondary: #595959;
-  --color-text-light: #8c8c8c; 
-  --white-text: #ffffff;
-
-  /* Colores de Fondo y Superficies */
-  --color-background: #ffffFf;
+  /* Background colors matching landing page */
+  --color-background: #f0f2f5;
   --color-surface: #ffffff;
 
-  /* Bordes y Divisores */
+  /* Text colors */
+  --color-text-main: #262626; 
+  --color-text-secondary: #595959;
+  --color-text-light: #8c8c8c; 
+  --color-text-on-primary: #ffffff;
+
+  /* Borders and dividers */
   --color-border: #d9d9d9;
 
   /* Status colors - keeping consistent with blue theme */
