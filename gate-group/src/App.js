@@ -15,8 +15,9 @@ function App() {
     <div className="App">
       <Router>
       <Header />
+      <LandingPage />
       <Routes>
-        <Route path="/smartIntelligence-by-MJandTheMonstars/" element={<LandingPage />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/pallet" element={<PalletForm />} />
         <Route path="/scanner" element={<ItemScanner />} />
         <Route path="/dashboard" element={<Dashboard />} />
