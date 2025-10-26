@@ -15,6 +15,7 @@ function PalletForm() {
     palletId: generatedPalletId,
     productId: '',
     productName: '',
+    unitCost: '',
     expirationDate: '',
     inWarehouse: true, // true = Bodega principal, false = Cuarto de preparación
     initialQuantity: '',
@@ -53,6 +54,9 @@ function PalletForm() {
     if (formData.initialQuantity === '' || Number(formData.initialQuantity) <= 0) {
       newErrors.initialQuantity = 'La cantidad debe ser mayor a 0';
     }
+    if (formData.unitCost === '' || Number(formData.unitCost) < 0) {
+      newErrors.unitCost = 'Ingresa un costo unitario válido (>= 0)';
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -73,7 +77,7 @@ function PalletForm() {
           product_id: productId,
           name: formData.productName || productId,
           description: formData.notes || '',
-          unit_cost: 0.00
+          unit_cost: Number(formData.unitCost) || 0
         }], { onConflict: 'product_id' });
       
       if (productErr) {
@@ -136,6 +140,7 @@ function PalletForm() {
       palletId: generatedPalletId,
       productId: '',
       productName: '',
+      unitCost: '',
       expirationDate: '',
       inWarehouse: true,
       initialQuantity: '',
@@ -195,6 +200,21 @@ function PalletForm() {
                 onChange={handleChange}
                 placeholder="Ej. Agua Mineral 500ml"
               />
+            </div>
+
+            <div className="form-field">
+              <label htmlFor="unitCost">Costo Unitario</label>
+              <input
+                id="unitCost"
+                name="unitCost"
+                type="number"
+                min="0"
+                step="0.01"
+                value={formData.unitCost}
+                onChange={handleChange}
+                placeholder="Ej. 12.50"
+              />
+              {errors.unitCost && <span className="error-text">{errors.unitCost}</span>}
             </div>
 
             <div className="form-field">
@@ -278,6 +298,9 @@ function PalletForm() {
               </div>
               <div>
                 <strong>Caducidad:</strong> <span>{saved.expirationDate}</span>
+              </div>
+              <div>
+                <strong>Costo Unitario:</strong> <span>${Number(saved.unitCost || 0).toFixed(2)}</span>
               </div>
               <div>
                 <strong>Ubicación:</strong> <span>{saved.inWarehouse ? 'Bodega Principal' : 'Cuarto de Preparación'}</span>
