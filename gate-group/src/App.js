@@ -13,9 +13,8 @@ function App() {
 
   return (
     <div className="App">
-      <Router>
+      <Router basename="/smartIntelligence-by-MJandTheMonstars">
       <Header />
-      <LandingPage />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/pallet" element={<PalletForm />} />
