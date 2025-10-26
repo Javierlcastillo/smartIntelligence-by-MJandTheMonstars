@@ -121,6 +121,13 @@ function Flights({ onBack }) {
 
   return (
     <div className="mobile-dashboard">
+      {/* Page Title */}
+      <div className="flights-title">
+        <h1 style={{ color: 'var(--color-primary)', marginBottom: '24px', fontSize: '2rem', fontWeight: 'bold' }}>
+          Flight Management
+        </h1>
+      </div>
+      
       {/* Flights List */}
       <section className="flights-list">
         {flights.map((flight, flightIndex) => {
