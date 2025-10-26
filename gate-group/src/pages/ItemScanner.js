@@ -94,7 +94,7 @@ function QRScannerSection({
   const handleCapture = async () => {
     if (!videoRef.current || !codeReaderRef.current) return;
     try {
-      const result = await codeReaderRef.current.decodeFromVideoElement(videoRef.current);
+      const result = await codeReaderRef.current.decodeOnceFromVideoElement(videoRef.current);
       if (result?.getText) {
         const text = result.getText();
         setLastResult(text);
@@ -108,6 +108,9 @@ function QRScannerSection({
         }
       }
     } catch (err) {
+      if (err.name === 'AbortError') {
+        return; // Ignore abort errors, they are not critical.
+      }
       if (err.name !== 'NotFoundException') {
         setError(msg(err)); // A real error occurred
       } else {
