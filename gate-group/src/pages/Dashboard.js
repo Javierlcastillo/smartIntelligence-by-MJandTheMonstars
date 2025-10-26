@@ -1,4 +1,4 @@
-import { React, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Flights from '../structs/Flights';
 import './Dashboard.css';
 import { fetchFlightsData, fetchWarehouseStats } from '../lib/flightsService';

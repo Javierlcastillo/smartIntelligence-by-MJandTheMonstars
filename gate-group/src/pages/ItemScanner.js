@@ -41,7 +41,6 @@ function QRScannerSection({
   const [torchOn, setTorchOn] = useState(false);
   const [error, setError] = useState("");
   const [lastResult, setLastResult] = useState("");
-  const [scannedData, setScannedData] = useState(null);
 
   const goTo = (href, onClick) => {
     if (onClick) return onClick();
@@ -99,13 +98,6 @@ function QRScannerSection({
         const text = result.getText();
         setLastResult(text);
         onScan?.(text);
-        try {
-            const data = JSON.parse(text);
-            setScannedData(data);
-        } catch (e) {
-            // Scanned text is not a valid JSON, do nothing.
-            // The raw text is already shown in the 'lastResult' box.
-        }
       }
     } catch (err) {
       if (err.name !== 'NotFoundException') {
@@ -219,23 +211,6 @@ function QRScannerSection({
           {error && <div className="error-text">Aviso: {error}</div>}
         </div>
       </div>
-
-      {scannedData && (
-        <div className="modal-overlay" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-            <div className="modal-content" style={{ background: 'white', padding: '25px', borderRadius: '10px', minWidth: '320px', maxWidth: '90%', boxShadow: '0 5px 15px rgba(0,0,0,0.3)' }}>
-                <h2 style={{ marginTop: 0, marginBottom: '15px', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>Datos del QR Escaneado</h2>
-                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                    {Object.entries(scannedData).map(([key, value]) => (
-                        <li key={key} style={{ marginBottom: '10px', fontSize: '16px' }}>
-                            <strong style={{ textTransform: 'capitalize', color: '#333' }}>{key.replace(/_/g, ' ')}:</strong>
-                            <span style={{ marginLeft: '10px', color: '#555', wordBreak: 'break-all' }}>{String(value)}</span>
-                        </li>
-                    ))}
-                </ul>
-                <button onClick={() => setScannedData(null)} style={{ width: '100%', padding: '12px', border: 'none', background: '#007bff', color: 'white', borderRadius: '5px', cursor: 'pointer', marginTop: '20px', fontSize: '16px' }}>Cerrar</button>
-            </div>
-        </div>
-      )}
     </div>
   );
 }
