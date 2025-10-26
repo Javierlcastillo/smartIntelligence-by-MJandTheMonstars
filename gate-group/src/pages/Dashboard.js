@@ -5,6 +5,7 @@ import './Dashboard.css';
 
 function Dashboard() {
   const [currentPage, setCurrentPage] = useState('dashboard');
+  const [flightFilter, setFlightFilter] = useState('all');
 
   // Sample data for dashboard
   const dashboardData = {
@@ -43,16 +44,18 @@ function Dashboard() {
     }
   ];
 
-  const handleNavigateToFlights = () => {
+  const handleNavigateToFlights = (filter = 'all') => {
     setCurrentPage('flights');
+    setFlightFilter(filter);
   };
 
   const handleBackToDashboard = () => {
     setCurrentPage('dashboard');
+    setFlightFilter('all');
   };
 
   if (currentPage === 'flights') {
-    return <Flights onBack={handleBackToDashboard} />;
+    return <Flights onBack={handleBackToDashboard} initialFilter={flightFilter} />;
   }
   return (
     <div className="dashboard-container">
@@ -62,15 +65,15 @@ function Dashboard() {
           <h3>{dashboardData.flightsToday}</h3>
           <p>Flights Today</p>
         </div>
-        <div className="metric-card success">
+        <div className="metric-card success clickable" onClick={() => handleNavigateToFlights('completed')}>
           <h3>{dashboardData.flightsCompleted}</h3>
           <p>Completed</p>
         </div>
-        <div className="metric-card warning">
+        <div className="metric-card warning clickable" onClick={() => handleNavigateToFlights('active')}>
           <h3>{dashboardData.flightsActive}</h3>
           <p>Active</p>
         </div>
-        <div className="metric-card danger">
+        <div className="metric-card danger clickable" onClick={() => handleNavigateToFlights('pending')}>
           <h3>{dashboardData.flightsPending}</h3>
           <p>Pending</p>
         </div>
