@@ -2,7 +2,8 @@
   /* Landing Page Color Scheme */
   --color-primary: #020064;
   --color-primary-hover: #40a9ff; 
-  --color-primary-active: #096dd9;
+  --color-primary-active: hsl(211, 84%, 35%);
+  --color-gold: #a99667;
 
   /* Background colors matching landing page */
   --color-background: #f0f2f5;
