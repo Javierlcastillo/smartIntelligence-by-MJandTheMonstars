@@ -4,40 +4,10 @@ import LandingPage from './pages/LandingPage';
 import PalletForm from './pages/PalletForm';
 import ItemScanner from './pages/ItemScanner';
 import Dashboard from './pages/Dashboard';
+import Header from './components/Header'
 import './App.css';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('dashboard');
-
-  // Sample data for dashboard
-  const dashboardData = {
-    flightsToday: 8,
-    activeCartridge: 12,
-    lowStock: 3,
-    expiringSoon: 5,
-    totalProducts: 156,
-    warehouseCapacity: 85
-  };
-
-  const nextFlight = {
-    id: 'LX110',
-    route: 'MTY-ZUR',
-    departure: '14:30',
-    cart: 'C-008',
-    status: 'Preparing'
-  };
-
-  const handleNavigateToFlights = () => {
-    setCurrentPage('flights');
-  };
-
-  const handleBackToDashboard = () => {
-    setCurrentPage('dashboard');
-  };
-
-  if (currentPage === 'flights') {
-    return <Flights onBack={handleBackToDashboard} />;
-  }
 
   return (
     <div className="App">
@@ -49,84 +19,8 @@ function App() {
         <Route path="/scanner" element={<ItemScanner />} />
         <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
-        <header className="dashboard-header">
-        <div className="header-branding">
-          <h1>Smart Intelligence</h1>
-          <p>Inventory Dashboard</p>
-        </div>
-        <nav className="header-navigation">
-          <button className="nav-btn primary">
-            Inventory
-          </button>
-          <button className="nav-btn secondary" onClick={handleNavigateToFlights}>
-            Flights
-          </button>
-          <button className="nav-btn tertiary">
-            Reports
-          </button>
-          <button className="nav-btn quaternary">
-            Settings
-          </button>
-        </nav>
-      </header>
-
-      {/* Main metrics */}
-      <section className="metrics-grid">
-        <div className="metric-card primary">
-          <h3>{dashboardData.flightsToday}</h3>
-          <p>Flights Today</p>
-        </div>
-        <div className="metric-card success">
-          <h3>{dashboardData.activeCartridge}</h3>
-          <p>Completed Carts</p>
-        </div>
-        <div className="metric-card warning">
-          <h3>{dashboardData.lowStock}</h3>
-          <p>Carts to Complete</p>
-        </div>
-        <div className="metric-card danger">
-          <h3>{dashboardData.expiringSoon}</h3>
-          <p>Finished Carts</p>
-        </div>
-      </section>
-
-      {/* Warehouse status */}
-      <div className="main-content">
-        <section className="inventory-status">
-          <h2>Warehouse Status</h2>
-          <div className="status-bar">
-            <div className="status-fill" style={{width: `${dashboardData.warehouseCapacity}%`}}></div>
-          </div>
-          <div className="status-info">
-            <span>{dashboardData.totalProducts} products</span>
-            <span>{dashboardData.warehouseCapacity}% capacity</span>
-          </div>
-        </section>
-
-
-
-        {/* Next Flight */}
-        <section className="next-flight">
-          <h2>Next Flight</h2>
-          <div className="flight-card clickable" onClick={handleNavigateToFlights}>
-            <div className="flight-header">
-              <h3>{nextFlight.id}</h3>
-              <span className={`flight-badge ${nextFlight.status.toLowerCase()}`}>
-                {nextFlight.status}
-              </span>
-            </div>
-            <div className="flight-details">
-              <p><strong>Route:</strong> {nextFlight.route}</p>
-              <p><strong>Departure:</strong> {nextFlight.departure}</p>
-              <p><strong>Cart:</strong> {nextFlight.cart}</p>
-            </div>
-            <div className="flight-action">
-              <span className="action-hint">Click to fill order →</span>
-            </div>
-          </div>
-        </section>
+      </Router>
       </div>
-    </div>
   );
 }
 

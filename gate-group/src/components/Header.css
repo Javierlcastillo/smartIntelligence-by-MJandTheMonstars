@@ -49,3 +49,6 @@
   transform-origin: 1px;
 }
 
+.header-logo-link {
+  text-decoration: none;
+}

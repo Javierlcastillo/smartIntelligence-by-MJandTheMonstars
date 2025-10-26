@@ -1,5 +1,5 @@
-import './App.css';
 import { useState } from 'react';
+import './Flights.css'
 
 function Flights({ onBack }) {
   const [expandedFlight, setExpandedFlight] = useState(null);
