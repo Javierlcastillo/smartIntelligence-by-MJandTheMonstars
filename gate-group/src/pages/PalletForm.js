@@ -44,7 +44,7 @@ function PalletForm() {
 
     setCurrentQR({ dataUrl: '', itemId: 'Generando...' }); // Loading state
 
-    const { palletId, productId, productName } = saved;
+    const { palletId, productId, productName, expirationDate } = saved;
     const itemIdFull = `${palletId}-${String(index + 1).padStart(6, '0')}`;
 
     const payload = {
@@ -52,6 +52,7 @@ function PalletForm() {
         item_id: productId,
         name: productName,
         item_id_full: itemIdFull,
+        expiration_date: expirationDate,
     };
 
     try {
