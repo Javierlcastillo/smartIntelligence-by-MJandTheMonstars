@@ -36,26 +36,7 @@ function Dashboard() {
   }
   return (
     <div>
-      <header className="dashboard-header">
-        <div className="header-branding">
-          <h1>Smart Intelligence</h1>
-          <p>Inventory Dashboard</p>
-        </div>
-        <nav className="header-navigation">
-          <button className="nav-btn primary">
-            Inventory
-          </button>
-          <button className="nav-btn secondary" onClick={handleNavigateToFlights}>
-            Flights
-          </button>
-          <button className="nav-btn tertiary">
-            Reports
-          </button>
-          <button className="nav-btn quaternary">
-            Settings
-          </button>
-        </nav>
-      </header>
+      
 
       {/* Main metrics */}
       <section className="metrics-grid">
