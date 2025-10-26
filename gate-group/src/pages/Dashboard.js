@@ -6,6 +6,7 @@ import './Dashboard.css';
 function Dashboard() {
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [flightFilter, setFlightFilter] = useState('all');
+  const [selectedFlightId, setSelectedFlightId] = useState(null);
 
   // Sample data for dashboard
   const dashboardData = {
@@ -44,24 +45,50 @@ function Dashboard() {
     }
   ];
 
-  const handleNavigateToFlights = (filter = 'all') => {
+  const handleNavigateToFlights = (filter = 'all', flightId = null) => {
     setCurrentPage('flights');
     setFlightFilter(filter);
+    setSelectedFlightId(flightId);
+  };
+
+  const handleNavigateToSpecificFlight = (flightId) => {
+    setCurrentPage('flights');
+    setFlightFilter('all');
+    setSelectedFlightId(flightId);
   };
 
   const handleBackToDashboard = () => {
     setCurrentPage('dashboard');
     setFlightFilter('all');
+    setSelectedFlightId(null);
   };
 
   if (currentPage === 'flights') {
-    return <Flights onBack={handleBackToDashboard} initialFilter={flightFilter} />;
+    return <Flights onBack={handleBackToDashboard} initialFilter={flightFilter} selectedFlightId={selectedFlightId} />;
   }
   return (
     <div className="dashboard-container">
+      {/* Dashboard Title */}
+      <div className="dashboard-header" style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center',
+        marginBottom: '24px',
+        position: 'relative'
+      }}>
+        <h1 style={{ 
+          color: 'var(--color-primary)', 
+          fontSize: '2rem', 
+          fontWeight: 'bold',
+          margin: 0
+        }}>
+          Dashboard
+        </h1>
+      </div>
+      
       {/* Main metrics */}
       <section className="metrics-grid">
-        <div className="metric-card primary">
+        <div className="metric-card primary" onClick={() => handleNavigateToFlights('all')}>
           <h3>{dashboardData.flightsToday}</h3>
           <p>Flights Today</p>
         </div>
@@ -99,17 +126,19 @@ function Dashboard() {
           <h2>Upcoming Flights</h2>
           <div className="flights-container">
             {upcomingFlights.map((flight) => (
-              <div key={flight.id} className="flight-card clickable" onClick={handleNavigateToFlights}>
-                <div className="flight-header">
-                  <h3>{flight.id}</h3>
-                  <span className={`flight-badge ${flight.status.toLowerCase()}`}>
-                    {flight.status}
-                  </span>
-                </div>
-                <div className="flight-details">
-                  <p><strong>Route:</strong> {flight.route}</p>
-                  <p><strong>Departure:</strong> {flight.departure}</p>
-                  <p><strong>Carts:</strong> {flight.completedCarts}/{flight.carts} completed</p>
+              <div key={flight.id} className="flight-card clickable" onClick={() => handleNavigateToSpecificFlight(flight.id)}>
+                <div className="flight-layout">
+                  <div className="flight-id-section">
+                    <h3>{flight.id}</h3>
+                    <span className={`flight-badge ${flight.status.toLowerCase()}`}>
+                      {flight.status}
+                    </span>
+                  </div>
+                  <div className="flight-info-section">
+                    <p><strong>Route:</strong> {flight.route}</p>
+                    <p><strong>Departure:</strong> {flight.departure}</p>
+                    <p><strong>Carts:</strong> {flight.completedCarts}/{flight.carts} completed</p>
+                  </div>
                 </div>
                 <div className="flight-action">
                   <span className="action-hint">Click to manage carts →</span>

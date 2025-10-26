@@ -1,10 +1,24 @@
 import './Flights.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-function Flights({ onBack, initialFilter = 'all' }) {
-  const [expandedFlight, setExpandedFlight] = useState(null);
+function Flights({ onBack, initialFilter = 'all', selectedFlightId = null }) {
+  const [expandedFlight, setExpandedFlight] = useState(selectedFlightId);
   const [statusFilter, setStatusFilter] = useState(initialFilter);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+
+  // Effect to handle when a specific flight is selected from dashboard
+  useEffect(() => {
+    if (selectedFlightId) {
+      setExpandedFlight(selectedFlightId);
+      // Optional: scroll to the flight card
+      setTimeout(() => {
+        const flightElement = document.querySelector(`[data-flight-id="${selectedFlightId}"]`);
+        if (flightElement) {
+          flightElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
+    }
+  }, [selectedFlightId]);
 
   const flights = [
     {
@@ -253,7 +267,7 @@ function Flights({ onBack, initialFilter = 'all' }) {
           const cartProgress = (completedCarts / totalCarts) * 100;
           
           return (
-            <div key={flight.id} className="flight-box">
+            <div key={flight.id} className="flight-box" data-flight-id={flight.id}>
               <div className="flight-header-info">
                 <div className="flight-main-info">
                   <h3>{flight.id}</h3>
