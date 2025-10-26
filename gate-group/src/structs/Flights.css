@@ -24,6 +24,8 @@ body {
   min-height: 100vh;
   background: #f0f2f5;
   padding-bottom: 100px; /* Add padding to avoid content being hidden by mobile nav */
+  /* Prevent horizontal scrolling on small screens */
+  overflow-x: hidden;
 }
 
 /* Flights Header - Mobile First */
@@ -82,6 +84,8 @@ body {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border: 1px solid #d9d9d9;
   transition: all 0.3s ease;
+  /* Allow long text and controls to wrap without causing overflow */
+  overflow-wrap: anywhere;
 }
 
 .flight-header-info {
@@ -126,6 +130,7 @@ body {
   align-items: center;
   gap: 6px;
   margin-left: 8px;
+  flex: 0 0 auto;
 }
 
 .action-btn-small {
@@ -701,6 +706,7 @@ body {
   color: #262626;
   min-width: 32px;
   text-align: center;
+  flex: 0 0 auto;
 }
 
 .fill-order-actions {
@@ -770,6 +776,9 @@ body {
   border: 1px solid #e8e8e8;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
+  /* Let children wrap on small screens to avoid horizontal overflow */
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .item-row:hover {
@@ -812,10 +821,28 @@ body {
   margin: 0;
 }
 
+/* Ensure the left info block can shrink and wrap */
+.item-info {
+  min-width: 0;
+  flex: 1 1 220px;
+  overflow: hidden;
+}
+
+.item-info h4,
+.item-info h5,
+.item-info p {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .item-progress {
   display: flex;
   align-items: center;
   gap: 8px;
+  /* Allow center section to shrink without causing scroll */
+  flex: 1 1 120px;
+  min-width: 0;
 }
 
 .progress-bar {
@@ -897,6 +924,7 @@ body {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border: 1px solid #d9d9d9;
   transition: all 0.3s ease;
+  overflow-wrap: anywhere;
 }
 
 .flight-box:hover {
@@ -1065,4 +1093,11 @@ body {
   font-weight: 600;
   color: #333;
   margin: 0 0 2px 0;
+}
+
+/* Extra-small phones: allow actions to move to a new row cleanly */
+@media (max-width: 480px) {
+  .item-row { align-items: flex-start; }
+  .item-actions { width: 100%; justify-content: flex-end; margin-left: 0; }
+  .progress-bar { width: 90px; }
 }
