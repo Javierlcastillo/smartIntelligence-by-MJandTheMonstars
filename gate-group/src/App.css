@@ -57,3 +57,86 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 */
+
+/* Cart Progress Styles */
+.carts-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.carts-progress p {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.carts-progress-bar {
+  width: 120px;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.carts-progress-fill {
+  height: 100%;
+  background: linear-gradient(135deg, #4ade80, #22d3ee);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* Cart Section Styles */
+.cart-section {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.cart-section:last-child {
+  margin-bottom: 0;
+}
+
+.cart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.cart-header h4 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.cart-status {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cart-status.completed {
+  background: rgba(74, 222, 128, 0.15);
+  color: #15803d;
+}
+
+.cart-status.pending {
+  background: rgba(251, 146, 60, 0.15);
+  color: #ea580c;
+}
+
+.item-row h5 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 2px 0;
+}
