@@ -15,14 +15,239 @@ body {
   min-height: 100vh;
 }
 
-/* Dashboard web layout */
+/* Mobile-First Base Styles */
 .mobile-dashboard {
   max-width: 100%;
   width: 100%;
   margin: 0;
-  padding: 24px 40px;
+  padding: 16px 20px;
   min-height: 100vh;
   background: #f0f2f5;
+  padding-bottom: 100px; /* Add padding to avoid content being hidden by mobile nav */
+}
+
+/* Flights Header - Mobile First */
+.flights-header {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.flights-header h1 {
+  color: var(--color-primary);
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin: 0;
+  text-align: center;
+}
+
+/* Filter Container - Mobile */
+.filter-container {
+  position: relative;
+  align-self: center;
+}
+
+/* Flight Details - Mobile Stacked Layout */
+.flight-details-inline {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  text-align: center;
+}
+
+.flight-details-inline p {
+  margin: 0;
+  font-size: 14px;
+  color: #595959;
+  text-align: center;
+}
+
+/* Cart Progress - Mobile Responsive */
+.carts-progress-bar {
+  width: 100px; /* Smaller on mobile */
+  height: 6px;
+  background: #e6f7ff;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+/* Flight Box - Mobile Layout */
+.flight-box {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #d9d9d9;
+  transition: all 0.3s ease;
+}
+
+.flight-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.flight-main-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.flight-main-info h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1890ff;
+  margin: 0;
+}
+
+/* Expand Button - Mobile */
+.expand-btn {
+  background: #1890ff;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-top: 8px;
+}
+
+/* Item Actions - Mobile */
+.item-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 8px;
+}
+
+.action-btn-small {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Tablet Styles (min-width: 768px) */
+@media (min-width: 768px) {
+  .mobile-dashboard {
+    padding: 24px 40px;
+    padding-bottom: 20px; /* Reset padding on tablet/desktop */
+  }
+
+  .flights-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+
+  .flights-header h1 {
+    font-size: 2rem;
+    text-align: left;
+  }
+
+  .filter-container {
+    align-self: auto;
+  }
+
+  .flight-header-info {
+    /* Use a 3-column grid so middle content can be centered */
+    display: grid;
+    grid-template-columns: auto 1fr auto; /* left: flight, middle: details, right: button */
+    column-gap: 24px;
+    align-items: center;
+  }
+
+  .flight-details-inline {
+    flex-direction: row;
+    gap: 24px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .flight-details-inline p {
+    text-align: center;
+    /* Don't stretch items; keep content natural width */
+    flex: 0 0 auto;
+  }
+
+  /* Keep flight number and badge together on the left */
+  .flight-main-info {
+    justify-content: flex-start; /* was space-between on mobile */
+    width: auto; /* prevent taking full row and pushing center/right */
+    gap: 12px;
+  }
+
+  /* Ensure the middle block truly centers in its grid cell */
+  .flight-details-inline {
+    justify-self: center;
+  }
+
+  /* Keep the action button to the far right */
+  .expand-btn {
+    justify-self: end;
+  }
+
+  .carts-progress {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .carts-progress-bar {
+    width: 120px; /* Larger on desktop */
+    height: 8px;
+  }
+
+  .expand-btn {
+    padding: 10px 16px;
+    font-size: 14px;
+    width: auto;
+    margin-top: 0;
+  }
+
+  .action-btn-small {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+  }
+
+  .item-actions {
+    gap: 8px;
+    margin-left: 12px;
+  }
+
+  .flight-box {
+    padding: 24px;
+  }
+
+  .flight-main-info h3 {
+    font-size: 24px;
+  }
+}
+
+/* Desktop Styles (min-width: 1024px) */
+@media (min-width: 1024px) {
+  .mobile-dashboard {
+    padding: 24px 40px;
+  }
 }
 
 /* Header */
@@ -635,130 +860,27 @@ body {
   color: #f5222d;
 }
 
-/* Responsivo para pantallas más pequeñas */
-@media (max-width: 1400px) {
-  .mobile-dashboard {
-    padding: 20px 30px;
-  }
-  
-  .metrics-grid {
-    gap: 16px;
-  }
-  
-  .main-content {
-    gap: 20px;
-  }
-}
+/* Legacy responsive styles removed - using mobile-first approach above */
 
-@media (max-width: 1024px) {
-  .mobile-dashboard {
-    padding: 20px 24px;
-  }
-  
-  .dashboard-header {
-    flex-direction: column;
-    gap: 20px;
-    text-align: center;
-  }
-  
-  .header-branding {
+/* Tablet+ overrides for item rows placed AFTER base styles to win cascade */
+@media (min-width: 768px) {
+  .item-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); /* left | center | right */
     align-items: center;
   }
-  
-  .header-navigation {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px;
-  }
-  
-  .metrics-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-  }
-  
-  .main-content {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-}
 
-@media (max-width: 768px) {
-  .mobile-dashboard {
-    padding: 16px 20px;
+  .item-info {
+    justify-self: start;
+    min-width: 0; /* allow shrinking within grid */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
-  
-  .dashboard-header {
-    padding: 16px 20px;
-  }
-  
-  .dashboard-header h1 {
-    font-size: 24px;
-  }
-  
-  .dashboard-header p {
-    font-size: 14px;
-  }
-  
-  .header-navigation {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    width: 100%;
-    gap: 10px;
-  }
-  
-  .nav-btn {
-    padding: 10px 16px;
-    font-size: 13px;
-  }
-  
-  .metrics-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-  
-  .metric-card {
-    padding: 18px 14px;
-  }
-  
-  .metric-card h3 {
-    font-size: 28px;
-  }
-  
-  .metric-card p {
-    font-size: 13px;
-  }
-}
 
-@media (max-width: 480px) {
-  .mobile-dashboard {
-    padding: 12px 16px;
-  }
-  
-  .dashboard-header {
-    padding: 14px 16px;
-  }
-  
-  .header-navigation {
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-  
-  .nav-btn {
-    padding: 8px 12px;
-    font-size: 12px;
-  }
-  
-  .metrics-grid {
-    gap: 8px;
-  }
-  
-  .metric-card {
-    padding: 16px 12px;
-  }
-  
-  .metric-card h3 {
-    font-size: 24px;
-  }
+  .item-progress { justify-self: center; }
+  .item-actions { justify-self: end; min-width: 0; }
+  .progress-bar { width: 120px; }
 }
 
 /* Flights List Styles */
@@ -782,12 +904,7 @@ body {
   transform: translateY(-2px);
 }
 
-.flight-header-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
+/* Duplicate flight-header-info removed - using mobile-first approach */
 
 .flight-main-info {
   display: flex;
@@ -823,21 +940,19 @@ body {
   color: #ffffff;
 }
 
-.flight-badge.empty {
-  background: #8c8c8c;
+.flight-badge.active {
+  background: #faad14;
   color: #ffffff;
 }
 
-.flight-details-inline {
-  display: flex;
-  gap: 24px;
-  align-items: center;
+.flight-badge.pending {
+  background: #f5222d;
+  color: #ffffff;
 }
 
-.flight-details-inline p {
-  margin: 0;
-  font-size: 14px;
-  color: #595959;
+.flight-badge.empty {
+  background: #8c8c8c;
+  color: #ffffff;
 }
 
 .expand-btn {

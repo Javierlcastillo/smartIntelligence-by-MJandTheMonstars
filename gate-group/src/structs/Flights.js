@@ -25,7 +25,7 @@ function Flights({ onBack, initialFilter = 'all', selectedFlightId = null }) {
       id: 'LX110',
       route: 'MTY-ZUR',
       departure: '14:30',
-      status: 'Preparing',
+      status: 'Active',
       carts: [
         {
           name: 'C-008',
@@ -86,7 +86,7 @@ function Flights({ onBack, initialFilter = 'all', selectedFlightId = null }) {
       id: 'AF890',
       route: 'CDG-LAX',
       departure: '22:15',
-      status: 'Empty',
+      status: 'Pending',
       carts: [
         {
           name: 'C-005',
