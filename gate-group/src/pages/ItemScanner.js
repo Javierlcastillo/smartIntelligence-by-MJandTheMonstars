@@ -41,7 +41,7 @@ function QRScannerSection({
   const [torchOn, setTorchOn] = useState(false);
   const [error, setError] = useState("");
   const [lastResult, setLastResult] = useState("");
-  const [scannedData, setScannedData] = useState(null);
+  const [scannedData, setScannedData] = useState(null); // State for popup data
 
   const goTo = (href, onClick) => {
     if (onClick) return onClick();
@@ -99,12 +99,12 @@ function QRScannerSection({
         const text = result.getText();
         setLastResult(text);
         onScan?.(text);
+
         try {
-            const data = JSON.parse(text);
-            setScannedData(data);
+          const parsedData = JSON.parse(text);
+          setScannedData(parsedData);
         } catch (e) {
-            // Scanned text is not a valid JSON, do nothing.
-            // The raw text is already shown in the 'lastResult' box.
+          setScannedData({ raw: text });
         }
       }
     } catch (err) {
@@ -162,6 +162,13 @@ function QRScannerSection({
       if (text) {
         setLastResult(text);
         onScan?.(text);
+        
+        try {
+          const parsedData = JSON.parse(text);
+          setScannedData(parsedData);
+        } catch (e) {
+          setScannedData({ raw: text });
+        }
       }
     } catch (err) {
       setError("No se detectó un código QR en la imagen.");
@@ -182,15 +189,6 @@ function QRScannerSection({
       img.src = url;
     });
 
-  const isURL = useMemo(() => {
-    try {
-      new URL(lastResult);
-      return true;
-    } catch {
-      return false;
-    }
-  }, [lastResult]);
-
   return (
     <div className="qr-scanner-container">
       <div className="qr-scanner-header">
@@ -209,36 +207,61 @@ function QRScannerSection({
       </div>
       <div className="result-container">
         <div className="result-box">
-          <div className="label">Último resultado</div>
+          <div className="label">Último resultado (raw)</div>
           <div className="result-text">{lastResult || "—"}</div>
-          {isURL && (
-            <button
-              onClick={() => (window.location.href = lastResult)}
-              className="open-link-button"
-            >
-              Abrir enlace
-            </button>
-          )}
           {error && <div className="error-text">Aviso: {error}</div>}
         </div>
       </div>
+      
+      <ResultPopup data={scannedData} onClose={() => setScannedData(null)} />
+    </div>
+  );
+}
 
-      {scannedData && (
-        <div className="modal-overlay" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-            <div className="modal-content" style={{ background: 'white', padding: '25px', borderRadius: '10px', minWidth: '320px', maxWidth: '90%', boxShadow: '0 5px 15px rgba(0,0,0,0.3)' }}>
-                <h2 style={{ marginTop: 0, marginBottom: '15px', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>Datos del QR Escaneado</h2>
-                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                    {Object.entries(scannedData).map(([key, value]) => (
-                        <li key={key} style={{ marginBottom: '10px', fontSize: '16px' }}>
-                            <strong style={{ textTransform: 'capitalize', color: '#333' }}>{key.replace(/_/g, ' ')}:</strong>
-                            <span style={{ marginLeft: '10px', color: '#555', wordBreak: 'break-all' }}>{String(value)}</span>
-                        </li>
-                    ))}
-                </ul>
-                <button onClick={() => setScannedData(null)} style={{ width: '100%', padding: '12px', border: 'none', background: '#007bff', color: 'white', borderRadius: '5px', cursor: 'pointer', marginTop: '20px', fontSize: '16px' }}>Cerrar</button>
-            </div>
-        </div>
-      )}
+function ResultPopup({ data, onClose }) {
+  if (!data) return null;
+
+  const isExpiringSoon = (dateStr) => {
+    if (!dateStr) return false;
+    try {
+      const expDate = new Date(dateStr);
+      const today = new Date();
+      // Check if the date is in the past, if so it's already expired.
+      if (expDate < today) return true;
+      const sevenDaysFromNow = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+      return expDate <= sevenDaysFromNow;
+    } catch {
+      return false;
+    }
+  };
+
+  const isJson = typeof data === 'object' && data !== null && !data.raw;
+  const expDate = data?.expiration_date || data?.exp_date;
+  const expiringSoon = isExpiringSoon(expDate);
+
+  return (
+    <div className="popup-overlay" onClick={onClose}>
+      <div className="popup-content" onClick={(e) => e.stopPropagation()}>
+        <h2>Resultado del Escaneo</h2>
+        {isJson ? (
+          <div className="popup-data">
+            {Object.entries(data).map(([key, value]) => {
+              const isExpKey = key === 'expiration_date' || key === 'exp_date';
+              return (
+                <div key={key} className="data-row">
+                  <strong className="data-key">{key.replace(/_/g, ' ')}:</strong>
+                  <span className={`data-value ${isExpKey && expiringSoon ? 'expiring-soon' : ''}`}>
+                    {String(value)}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <p className="raw-text-popup">{data.raw || String(data)}</p>
+        )}
+        <button onClick={onClose} className="popup-close-btn">Cerrar</button>
+      </div>
     </div>
   );
 }
