@@ -1,5 +1,6 @@
 import { React, useState} from 'react';
 import Flights from '../structs/Flights';
+import './Dashboard.css';
 
 
 function Dashboard() {
@@ -7,21 +8,40 @@ function Dashboard() {
 
   // Sample data for dashboard
   const dashboardData = {
-    flightsToday: 8,
-    activeCartridge: 12,
-    lowStock: 3,
-    expiringSoon: 5,
+    flightsToday: 20,
+    flightsCompleted: 12,
+    flightsActive: 3,
+    flightsPending: 5,
     totalProducts: 156,
     warehouseCapacity: 85
   };
 
-  const nextFlight = {
-    id: 'LX110',
-    route: 'MTY-ZUR',
-    departure: '14:30',
-    cart: 'C-008',
-    status: 'Preparing'
-  };
+  const upcomingFlights = [
+    {
+      id: 'LX110',
+      route: 'MTY-ZUR',
+      departure: '14:30',
+      carts: 3,
+      completedCarts: 1,
+      status: 'Preparing'
+    },
+    {
+      id: 'BA215',
+      route: 'LHR-JFK',
+      departure: '16:45',
+      carts: 2,
+      completedCarts: 2,
+      status: 'Ready'
+    },
+    {
+      id: 'AF890',
+      route: 'CDG-LAX',
+      departure: '22:15',
+      carts: 3,
+      completedCarts: 0,
+      status: 'Pending'
+    }
+  ];
 
   const handleNavigateToFlights = () => {
     setCurrentPage('flights');
@@ -35,28 +55,7 @@ function Dashboard() {
     return <Flights onBack={handleBackToDashboard} />;
   }
   return (
-    <div>
-      <header className="dashboard-header">
-        <div className="header-branding">
-          <h1>Smart Intelligence</h1>
-          <p>Inventory Dashboard</p>
-        </div>
-        <nav className="header-navigation">
-          <button className="nav-btn primary">
-            Inventory
-          </button>
-          <button className="nav-btn secondary" onClick={handleNavigateToFlights}>
-            Flights
-          </button>
-          <button className="nav-btn tertiary">
-            Reports
-          </button>
-          <button className="nav-btn quaternary">
-            Settings
-          </button>
-        </nav>
-      </header>
-
+    <div className="dashboard-container">
       {/* Main metrics */}
       <section className="metrics-grid">
         <div className="metric-card primary">
@@ -64,16 +63,16 @@ function Dashboard() {
           <p>Flights Today</p>
         </div>
         <div className="metric-card success">
-          <h3>{dashboardData.activeCartridge}</h3>
-          <p>Completed Carts</p>
+          <h3>{dashboardData.flightsCompleted}</h3>
+          <p>Completed</p>
         </div>
         <div className="metric-card warning">
-          <h3>{dashboardData.lowStock}</h3>
-          <p>Carts to Complete</p>
+          <h3>{dashboardData.flightsActive}</h3>
+          <p>Active</p>
         </div>
         <div className="metric-card danger">
-          <h3>{dashboardData.expiringSoon}</h3>
-          <p>Finished Carts</p>
+          <h3>{dashboardData.flightsPending}</h3>
+          <p>Pending</p>
         </div>
       </section>
 
@@ -92,24 +91,28 @@ function Dashboard() {
 
 
 
-        {/* Next Flight */}
-        <section className="next-flight">
-          <h2>Next Flight</h2>
-          <div className="flight-card clickable" onClick={handleNavigateToFlights}>
-            <div className="flight-header">
-              <h3>{nextFlight.id}</h3>
-              <span className={`flight-badge ${nextFlight.status.toLowerCase()}`}>
-                {nextFlight.status}
-              </span>
-            </div>
-            <div className="flight-details">
-              <p><strong>Route:</strong> {nextFlight.route}</p>
-              <p><strong>Departure:</strong> {nextFlight.departure}</p>
-              <p><strong>Cart:</strong> {nextFlight.cart}</p>
-            </div>
-            <div className="flight-action">
-              <span className="action-hint">Click to fill order →</span>
-            </div>
+        {/* Upcoming Flights */}
+        <section className="upcoming-flights">
+          <h2>Upcoming Flights</h2>
+          <div className="flights-container">
+            {upcomingFlights.map((flight) => (
+              <div key={flight.id} className="flight-card clickable" onClick={handleNavigateToFlights}>
+                <div className="flight-header">
+                  <h3>{flight.id}</h3>
+                  <span className={`flight-badge ${flight.status.toLowerCase()}`}>
+                    {flight.status}
+                  </span>
+                </div>
+                <div className="flight-details">
+                  <p><strong>Route:</strong> {flight.route}</p>
+                  <p><strong>Departure:</strong> {flight.departure}</p>
+                  <p><strong>Carts:</strong> {flight.completedCarts}/{flight.carts} completed</p>
+                </div>
+                <div className="flight-action">
+                  <span className="action-hint">Click to manage carts →</span>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
         </div>
