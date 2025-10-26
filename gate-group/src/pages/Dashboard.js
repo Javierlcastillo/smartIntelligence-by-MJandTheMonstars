@@ -1,5 +1,6 @@
 import { React, useState} from 'react';
 import Flights from '../structs/Flights';
+import './Dashboard.css';
 
 
 function Dashboard() {
@@ -7,10 +8,10 @@ function Dashboard() {
 
   // Sample data for dashboard
   const dashboardData = {
-    flightsToday: 8,
-    activeCartridge: 12,
-    lowStock: 3,
-    expiringSoon: 5,
+    flightsToday: 20,
+    flightsCompleted: 12,
+    flightsActive: 3,
+    flightsPending: 5,
     totalProducts: 156,
     warehouseCapacity: 85
   };
@@ -62,16 +63,16 @@ function Dashboard() {
           <p>Flights Today</p>
         </div>
         <div className="metric-card success">
-          <h3>{dashboardData.activeCartridge}</h3>
-          <p>Completed Flights</p>
+          <h3>{dashboardData.flightsCompleted}</h3>
+          <p>Completed</p>
         </div>
         <div className="metric-card warning">
-          <h3>{dashboardData.lowStock}</h3>
-          <p>Upcoming Flights</p>
+          <h3>{dashboardData.flightsActive}</h3>
+          <p>Active</p>
         </div>
         <div className="metric-card danger">
-          <h3>{dashboardData.expiringSoon}</h3>
-          <p>Finished Flights</p>
+          <h3>{dashboardData.flightsPending}</h3>
+          <p>Pending</p>
         </div>
       </section>
 

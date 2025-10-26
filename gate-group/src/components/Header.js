@@ -33,7 +33,7 @@ function Header() {
       <div className={`slide-menu ${isMenuOpen ? 'open' : ''}`}>
         <nav className="slide-menu-nav">
           <Link to="/dashboard" className="menu-item" onClick={closeMenu}>
-            Inventory
+            Dashboard
           </Link>
           <Link to="/flights" className="menu-item" onClick={closeMenu}>
             Flights
