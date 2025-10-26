@@ -1,12 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './LandingPage.css';
+import landingPicture from './landingPicture.jpg';
 
 function LandingPage() {
   return (
     <>
       <div className="hero-section">
-        <img src="/landingPicture.jpg" alt="Airline catering service" className="hero-image"/>
+        <img src={landingPicture} alt="Airline catering service" className="hero-image"/>
         <div className="airline-banner">
           <div className="airline-logos">
             <span>Lufthansa</span>
