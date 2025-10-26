@@ -3,6 +3,8 @@ import { useState } from 'react';
 
 function Flights({ onBack }) {
   const [expandedFlight, setExpandedFlight] = useState(null);
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
 
   const flights = [
     {
@@ -119,18 +121,132 @@ function Flights({ onBack }) {
     console.log(`Updating flight ${flightIndex}, item ${itemIndex} to ${newLoaded}`);
   };
 
+  // Filter flights based on cart completion status
+  const filteredFlights = flights.filter(flight => {
+    if (statusFilter === 'all') return true;
+    
+    const completedCarts = flight.carts.filter(cart => cart.completed).length;
+    const totalCarts = flight.carts.length;
+    
+    if (statusFilter === 'completed') {
+      return completedCarts === totalCarts; // All carts completed
+    } else if (statusFilter === 'pending') {
+      return completedCarts > 0 && completedCarts < totalCarts; // Some but not all completed
+    } else if (statusFilter === 'empty') {
+      return completedCarts === 0; // No carts completed
+    }
+    
+    return true;
+  });
+
+  const filterOptions = [
+    { value: 'all', label: 'All Flights' },
+    { value: 'completed', label: 'Fully Completed' },
+    { value: 'pending', label: 'Partially Completed' },
+    { value: 'empty', label: 'Not Started' }
+  ];
+
+  const handleFilterChange = (value) => {
+    setStatusFilter(value);
+    setShowFilterDropdown(false);
+  };
+
   return (
     <div className="mobile-dashboard">
-      {/* Page Title */}
-      <div className="flights-title">
-        <h1 style={{ color: 'var(--color-primary)', marginBottom: '24px', fontSize: '2rem', fontWeight: 'bold' }}>
+      {/* Page Title and Filter */}
+      <div className="flights-header" style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center',
+        marginBottom: '24px',
+        position: 'relative'
+      }}>
+        <h1 style={{ 
+          color: 'var(--color-primary)', 
+          fontSize: '2rem', 
+          fontWeight: 'bold',
+          margin: 0
+        }}>
           Flight Management
         </h1>
+        
+        {/* Filter Button */}
+        <div className="filter-container" style={{ position: 'relative' }}>
+          <button 
+            onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+            style={{
+              backgroundColor: 'var(--color-primary)',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              padding: '10px 16px',
+              fontSize: '14px',
+              fontWeight: '500',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            }}
+          >
+            Filter
+            <span style={{ fontSize: '12px' }}>
+              {showFilterDropdown ? '▲' : '▼'}
+            </span>
+          </button>
+          
+          {/* Dropdown Menu */}
+          {showFilterDropdown && (
+            <div style={{
+              position: 'absolute',
+              top: '100%',
+              right: 0,
+              marginTop: '4px',
+              backgroundColor: 'var(--color-surface)',
+              border: '1px solid var(--color-border)',
+              borderRadius: '8px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+              zIndex: 1000,
+              minWidth: '180px'
+            }}>
+              {filterOptions.map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => handleFilterChange(option.value)}
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    border: 'none',
+                    backgroundColor: statusFilter === option.value ? 'var(--color-primary)' : 'transparent',
+                    color: statusFilter === option.value ? 'white' : 'var(--color-text-main)',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    borderRadius: statusFilter === option.value ? '6px' : '0',
+                    margin: statusFilter === option.value ? '2px' : '0'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (statusFilter !== option.value) {
+                      e.target.style.backgroundColor = 'var(--color-background)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (statusFilter !== option.value) {
+                      e.target.style.backgroundColor = 'transparent';
+                    }
+                  }}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
       
       {/* Flights List */}
       <section className="flights-list">
-        {flights.map((flight, flightIndex) => {
+        {filteredFlights.map((flight, flightIndex) => {
           const completedCarts = flight.carts.filter(cart => cart.completed).length;
           const totalCarts = flight.carts.length;
           const cartProgress = (completedCarts / totalCarts) * 100;
