@@ -67,6 +67,8 @@ function Flights({ onBack, initialFilter = 'all', selectedFlightId = null }) {
       const diff = newLoaded - currentLoaded;
       const productId = item.productId;
 
+      console.log(`Updating item: ${item.item}, current: ${currentLoaded}, new: ${newLoaded}, diff: ${diff}`);
+
       if (diff > 0) {
         // Move items from warehouse to cart
         const { data: available, error: availErr } = await supabase
@@ -75,15 +77,27 @@ function Flights({ onBack, initialFilter = 'all', selectedFlightId = null }) {
           .is('cart_id', null)
           .eq('inventory_pallet.product_id', productId)
           .limit(diff);
-        if (availErr) throw availErr;
+        
+        if (availErr) {
+          console.error('Error fetching available items:', availErr);
+          throw availErr;
+        }
 
         const ids = (available || []).map((a) => a.item_id);
+        console.log(`Found ${ids.length} available items to move to cart`);
+        
         if (ids.length > 0) {
           const { error: updErr } = await supabase
             .from('product_item')
             .update({ cart_id: cart.cartId, status: 'ok' })
             .in('item_id', ids);
-          if (updErr) throw updErr;
+          if (updErr) {
+            console.error('Error updating items to cart:', updErr);
+            throw updErr;
+          }
+          console.log(`Successfully moved ${ids.length} items to cart`);
+        } else {
+          console.warn('No available items found to move to cart');
         }
       } else if (diff < 0) {
         // Move items from cart back to warehouse
@@ -94,22 +108,37 @@ function Flights({ onBack, initialFilter = 'all', selectedFlightId = null }) {
           .eq('cart_id', cart.cartId)
           .eq('inventory_pallet.product_id', productId)
           .limit(toRemove);
-        if (onCartErr) throw onCartErr;
+        
+        if (onCartErr) {
+          console.error('Error fetching cart items:', onCartErr);
+          throw onCartErr;
+        }
 
         const ids = (onCart || []).map((a) => a.item_id);
+        console.log(`Found ${ids.length} items to remove from cart`);
+        
         if (ids.length > 0) {
           const { error: updErr } = await supabase
             .from('product_item')
             .update({ cart_id: null })
             .in('item_id', ids);
-          if (updErr) throw updErr;
+          if (updErr) {
+            console.error('Error removing items from cart:', updErr);
+            throw updErr;
+          }
+          console.log(`Successfully removed ${ids.length} items from cart`);
         }
       }
 
+      // Refresh the flights data to reflect changes
       await fetchFlights();
+      console.log('Successfully refreshed flights data');
     } catch (err) {
       console.error('Error updating item:', err);
-      setError(err.message);
+      setError(`Failed to update item: ${err.message}`);
+      
+      // Optionally show a user-friendly error message
+      alert(`Error updating item: ${err.message}`);
     }
   };
 
@@ -308,6 +337,7 @@ function Flights({ onBack, initialFilter = 'all', selectedFlightId = null }) {
                               <button 
                                 className="action-btn-small decrease"
                                 onClick={() => handleUpdateItem(flightIndex, cartIndex, itemIndex, Math.max(0, item.loaded - 1))}
+                                disabled={item.loaded <= 0}
                               >
                                 -
                               </button>
@@ -315,6 +345,7 @@ function Flights({ onBack, initialFilter = 'all', selectedFlightId = null }) {
                               <button 
                                 className="action-btn-small increase"
                                 onClick={() => handleUpdateItem(flightIndex, cartIndex, itemIndex, Math.min(item.required, item.loaded + 1))}
+                                disabled={item.loaded >= item.required}
                               >
                                 +
                               </button>

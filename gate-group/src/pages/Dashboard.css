@@ -89,9 +89,21 @@
   gap: 16px;
 }
 
+.charts-grid-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
 .chart-item {
   width: 100%;
-  min-height: 220px;
+  min-height: 110px;
+}
+
+.pie-chart-small {
+  height: 200px;
+  max-width: 300px;
+  margin: 0 auto;
 }
 
 /* Inventory Status */
@@ -311,6 +323,10 @@
 
   .charts-grid {
     grid-template-columns: 1fr;
+  }
+
+  .charts-grid-vertical {
+    gap: 16px;
   }
 
   /* Stack flight layout and make details easier to read */

@@ -18,8 +18,8 @@ function percent(n) {
   return Math.max(0, Math.min(100, Math.round(n)));
 }
 
-export default function DashboardCharts({ flights = [], warehouse = { capacityPct: 0 } }) {
-  const { statusData, cartsData, capacityData } = useMemo(() => {
+export default function DashboardCharts({ flights = [] }) {
+  const { statusData, cartsData } = useMemo(() => {
     const ready = flights.filter(f => f.status === 'Ready').length;
     const active = flights.filter(f => f.status === 'Active').length;
     const pending = flights.filter(f => f.status === 'Pending').length;
@@ -54,23 +54,12 @@ export default function DashboardCharts({ flights = [], warehouse = { capacityPc
       ]
     };
 
-    const capacityData = {
-      labels: ['Capacity'],
-      datasets: [
-        {
-          label: 'Warehouse Capacity',
-          data: [percent(warehouse.capacityPct), 100 - percent(warehouse.capacityPct)],
-          backgroundColor: ['#1890ff', '#e6f7ff'],
-          borderWidth: 0,
-        }
-      ]
-    };
-
-    return { statusData, cartsData, capacityData };
-  }, [flights, warehouse]);
+    return { statusData, cartsData };
+  }, [flights]);
 
   const doughnutOpts = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: { position: 'bottom' },
       title: { display: true, text: 'Flights by status' }
@@ -89,24 +78,12 @@ export default function DashboardCharts({ flights = [], warehouse = { capacityPc
     }
   };
 
-  const capacityOpts = {
-    responsive: true,
-    plugins: {
-      legend: { display: false },
-      title: { display: true, text: 'Warehouse capacity' }
-    },
-    rotation: -90,
-    circumference: 180,
-    cutout: '70%'
-  };
-
   return (
     <section className="charts-card">
       <h2>Insights</h2>
-      <div className="charts-grid">
-        <div className="chart-item"><Doughnut data={statusData} options={doughnutOpts} /></div>
+      <div className="charts-grid-vertical">
+        <div className="chart-item pie-chart-small"><Doughnut data={statusData} options={doughnutOpts} /></div>
         <div className="chart-item"><Bar data={cartsData} options={barOpts} /></div>
-        <div className="chart-item"><Doughnut data={capacityData} options={capacityOpts} /></div>
       </div>
     </section>
   );

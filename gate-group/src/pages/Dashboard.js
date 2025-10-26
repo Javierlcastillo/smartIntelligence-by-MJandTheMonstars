@@ -120,7 +120,7 @@ function Dashboard() {
       {/* Warehouse status */}
       <div className="main-content">
         {/* Charts */}
-        <DashboardCharts flights={flights} warehouse={warehouse} />
+        <DashboardCharts flights={flights} />
 
 
 
