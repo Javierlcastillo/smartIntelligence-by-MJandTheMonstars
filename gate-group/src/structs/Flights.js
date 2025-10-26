@@ -1,9 +1,9 @@
 import './Flights.css';
 import { useState } from 'react';
 
-function Flights({ onBack }) {
+function Flights({ onBack, initialFilter = 'all' }) {
   const [expandedFlight, setExpandedFlight] = useState(null);
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState(initialFilter);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
 
   const flights = [
@@ -130,9 +130,9 @@ function Flights({ onBack }) {
     
     if (statusFilter === 'completed') {
       return completedCarts === totalCarts; // All carts completed
-    } else if (statusFilter === 'pending') {
+    } else if (statusFilter === 'active') {
       return completedCarts > 0 && completedCarts < totalCarts; // Some but not all completed
-    } else if (statusFilter === 'empty') {
+    } else if (statusFilter === 'pending') {
       return completedCarts === 0; // No carts completed
     }
     
@@ -141,9 +141,10 @@ function Flights({ onBack }) {
 
   const filterOptions = [
     { value: 'all', label: 'All Flights' },
-    { value: 'completed', label: 'Fully Completed' },
-    { value: 'pending', label: 'Partially Completed' },
-    { value: 'empty', label: 'Not Started' }
+    { value: 'completed', label: 'Completed' },
+    { value: 'active', label: 'Active' },
+    { value: 'pending', label: 'Pending' }
+    
   ];
 
   const handleFilterChange = (value) => {
