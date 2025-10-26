@@ -1,0 +1,87 @@
+/* Base Styles (Mobile-First) */
+.landing-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+  background-color: #f0f2f5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  box-sizing: border-box;
+}
+
+.landing-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.landing-header h1 {
+  font-size: 2.5rem; /* Adjusted for mobile */
+  color: #1890ff;
+  margin: 0;
+}
+
+.landing-header p {
+  font-size: 1.1rem; /* Adjusted for mobile */
+  color: #595959;
+  padding: 0 10px;
+}
+
+.landing-nav {
+  display: flex;
+  flex-direction: column; /* Stack buttons vertically */
+  align-items: stretch; /* Make buttons full-width */
+  width: 90%;
+  max-width: 400px; /* Constrain max width on larger phones */
+  gap: 15px; /* Space between buttons */
+}
+
+.nav-button {
+  display: block; /* Ensure it takes full width */
+  padding: 18px 20px; /* Taller buttons for easier tapping */
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: #1890ff;
+  border: none;
+  border-radius: 10px; /* Slightly larger radius */
+  text-decoration: none;
+  text-align: center;
+  transition: background-color 0.3s, transform 0.2s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.nav-button:hover {
+  background-color: #40a9ff;
+  transform: translateY(-2px);
+}
+
+.nav-button:active {
+  transform: translateY(0);
+  background-color: #096dd9;
+}
+
+/* Tablet and Desktop Styles */
+@media (min-width: 768px) {
+  .landing-header h1 {
+    font-size: 3.5rem; /* Larger font for desktops */
+  }
+
+  .landing-header p {
+    font-size: 1.3rem;
+  }
+
+  .landing-nav {
+    flex-direction: row; /* Side-by-side buttons on larger screens */
+    width: auto;
+    max-width: none;
+    gap: 20px;
+  }
+
+  .nav-button {
+    padding: 15px 35px; /* Original padding for desktop */
+  }
+}

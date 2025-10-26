@@ -1,6 +1,10 @@
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LandingPage from './pages/LandingPage';
+import PalletForm from './pages/PalletForm';
+import ItemScanner from './pages/ItemScanner';
+import Dashboard from './pages/Dashboard';
 import './App.css';
-import { useState } from 'react';
-import Flights from './Flights';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('dashboard');
@@ -36,9 +40,16 @@ function App() {
   }
 
   return (
-    <div className="mobile-dashboard">
-      {/* Header */}
-      <header className="dashboard-header">
+    <div className="App">
+      <Router>
+      <Header />
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/pallet" element={<PalletForm />} />
+        <Route path="/scanner" element={<ItemScanner />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
+        <header className="dashboard-header">
         <div className="header-branding">
           <h1>Smart Intelligence</h1>
           <p>Inventory Dashboard</p>

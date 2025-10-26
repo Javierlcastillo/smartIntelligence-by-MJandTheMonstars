@@ -1,0 +1,51 @@
+.header {
+  display: flex;
+  justify-content: space-between; /* Pushes items to the ends */
+  align-items: center; /* Vertically aligns items */
+  background-color: var(--color-primary);
+  padding: 15px 25px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+#GateGroup-head {
+  font-family: var(--font-family-headings);
+  font-weight: 300;
+  font-size: 2rem;
+  color: var(--color-text-on-primary);
+  margin: 0; /* Remove default margin */
+}
+
+#GateGroup-head b {
+  font-weight: 600;
+  color: var(--color-text-on-primary);
+}
+
+/* Burger Menu Styles */
+.burger-menu {
+  display: flex;
+  
+  flex-direction: column;
+  justify-content: space-around;
+  width: 2rem;
+  height: 2rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 10;
+}
+
+.burger-menu:focus {
+  outline: none;
+}
+
+.burger-menu span {
+  width: 2rem;
+  height: 0.25rem;
+  background: var(--color-text-on-primary);
+  border-radius: 10px;
+  transition: all 0.3s linear;
+  position: relative;
+  transform-origin: 1px;
+}
+
