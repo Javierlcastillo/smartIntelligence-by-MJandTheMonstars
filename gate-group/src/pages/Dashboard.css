@@ -4,6 +4,10 @@
   background-color: var(--color-background);
   min-height: 100vh;
   font-family: var(--font-family-main);
+  width: 100%;
+  box-sizing: border-box;
+  /* Avoid horizontal overflow on small screens */
+  overflow-x: hidden;
 }
 
 /* Metrics Grid */
@@ -129,6 +133,8 @@
   border-left: 4px solid var(--color-primary);
   transition: all 0.3s ease;
   cursor: pointer;
+  /* Allow content to wrap instead of forcing overflow */
+  overflow-wrap: anywhere;
 }
 
 .flight-card:hover {
@@ -159,6 +165,12 @@
   gap: 16px;
   text-align: center;
   align-items: center;
+}
+
+/* Prevent grid items from causing horizontal overflow */
+.flight-id-section,
+.flight-info-section {
+  min-width: 0;
 }
 
 .flight-details-centered {
@@ -258,12 +270,47 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .dashboard-container {
+    padding: 12px;
+  }
   .main-content {
     grid-template-columns: 1fr;
   }
   
   .metrics-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
+    /* Use a single column to avoid overflow on very small widths */
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* Stack flight layout and make details easier to read */
+  .flight-layout {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .flight-id-section {
+    align-items: center;
+  }
+
+  .flight-info-section {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .flight-card {
+    padding: 16px;
+  }
+}
+
+/* Extra-small phones */
+@media (max-width: 480px) {
+  .flight-info-section {
+    grid-template-columns: 1fr;
+  }
+
+  .flight-header h3,
+  .flight-id-section h3 {
+    font-size: 1.25rem;
   }
 }
