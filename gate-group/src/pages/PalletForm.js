@@ -163,10 +163,10 @@ function PalletForm() {
               <input
                 id="palletId"
                 name="palletId"
-                type="number"
+                type="text"
                 value={formData.palletId}
                 onChange={handleChange}
-                placeholder="Ej. 123456789"
+                placeholder="Ej. PAL-123456789"
               />
               {errors.palletId && <span className="error-text">{errors.palletId}</span>}
             </div>
