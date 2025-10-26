@@ -101,13 +101,13 @@ body {
 .flight-main-info h3 {
   font-size: 20px;
   font-weight: 700;
-  color: #1890ff;
+  color: #020064; 
   margin: 0;
 }
 
 /* Expand Button - Mobile */
 .expand-btn {
-  background: #1890ff;
+  background: #020064;
   color: white;
   border: none;
   padding: 8px 12px;
@@ -683,8 +683,8 @@ body {
 
 .action-btn-small.increase {
   background: rgba(24, 144, 255, 0.1);
-  color: #1890ff;
-  border: 1px solid #1890ff;
+  color: #020064;
+  border: 1px solid #020064;
 }
 
 .action-btn-small:hover {
@@ -915,7 +915,7 @@ body {
 .flight-main-info h3 {
   font-size: 24px;
   font-weight: 700;
-  color: #1890ff;
+  color: #020064;
   margin: 0;
 }
 
@@ -926,7 +926,7 @@ body {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  background: #1890ff;
+  background: #020064;
   color: #ffffff;
 }
 
@@ -956,7 +956,7 @@ body {
 }
 
 .expand-btn {
-  background: #1890ff;
+  background: #020064;
   color: white;
   border: none;
   padding: 10px 16px;
@@ -1007,7 +1007,7 @@ body {
 
 .carts-progress-fill {
   height: 100%;
-  background: #1890ff;
+  background: #020064;
   border-radius: 4px;
   transition: width 0.3s ease;
 }
@@ -1037,7 +1037,7 @@ body {
 .cart-header h4 {
   font-size: 18px;
   font-weight: 600;
-  color: #1890ff;
+  color: #020064;
   margin: 0;
 }
 
