@@ -1,5 +1,5 @@
+import './Flights.css';
 import { useState } from 'react';
-import './Flights.css'
 
 function Flights({ onBack }) {
   const [expandedFlight, setExpandedFlight] = useState(null);
@@ -121,28 +121,6 @@ function Flights({ onBack }) {
 
   return (
     <div className="mobile-dashboard">
-      {/* Header */}
-      <header className="dashboard-header">
-        <div className="header-branding">
-          <h1>Smart Intelligence</h1>
-          <p>Inventory Dashboard</p>
-        </div>
-        <nav className="header-navigation">
-          <button className="nav-btn secondary" onClick={handleBackToDashboard}>
-            Inventory
-          </button>
-          <button className="nav-btn primary">
-            Flights
-          </button>
-          <button className="nav-btn tertiary">
-            Reports
-          </button>
-          <button className="nav-btn quaternary">
-            Settings
-          </button>
-        </nav>
-      </header>
-
       {/* Flights List */}
       <section className="flights-list">
         {flights.map((flight, flightIndex) => {
